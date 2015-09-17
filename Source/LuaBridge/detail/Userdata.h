@@ -1,3 +1,4 @@
+#include "LuaBridge.h"
 //------------------------------------------------------------------------------
 /*
   https://github.com/vinniefalco/LuaBridge
@@ -125,7 +126,7 @@ private:
       }
       else
       {
-        rawgetfield (L, -2, "__const");
+        luabridge::rawgetfield (L, -2, "__const");
         if (lua_rawequal (L, -1, -2))
         {
           // Matches const table
@@ -135,7 +136,7 @@ private:
         else
         {
           // Mismatch, but its one of ours so get a type name.
-          rawgetfield (L, -2, "__type");
+          luabridge::rawgetfield (L, -2, "__type");
           lua_insert (L, -4);
           lua_pop (L, 2);
           got = lua_tostring (L, -2);
@@ -146,7 +147,7 @@ private:
 
     if (mismatch)
     {
-      rawgetfield (L, -1, "__type");
+      luabridge::rawgetfield (L, -1, "__type");
       assert (lua_type (L, -1) == LUA_TSTRING);
       char const* const expected = lua_tostring (L, -1);
 
@@ -199,7 +200,7 @@ private:
         lua_pop (L, 1);
 
         // If __const is present, object is NOT const.
-        rawgetfield (L, -1, "__const");
+        luabridge::rawgetfield (L, -1, "__const");
         assert (lua_istable (L, -1) || lua_isnil (L, -1));
         bool const isConst = lua_isnil (L, -1);
         lua_pop (L, 1);
@@ -207,7 +208,7 @@ private:
         // Replace the class table with the const table if needed.
         if (isConst)
         {
-          rawgetfield (L, -2, "__const");
+          luabridge::rawgetfield (L, -2, "__const");
           assert (lua_istable (L, -1));
           lua_replace (L, -3);
         }
@@ -232,7 +233,7 @@ private:
           else
           {
             // Replace current metatable with it's base class.
-            rawgetfield (L, -1, "__parent");
+            luabridge::rawgetfield (L, -1, "__parent");
 /*
 ud
 class metatable
@@ -244,7 +245,7 @@ ud __parent (nil)
             {
               lua_remove (L, -1);
               // Mismatch, but its one of ours so get a type name.
-              rawgetfield (L, -1, "__type");
+              luabridge::rawgetfield (L, -1, "__type");
               lua_insert (L, -3);
               lua_pop (L, 1);
               got = lua_tostring (L, -2);
@@ -272,7 +273,7 @@ ud __parent (nil)
     if (mismatch)
     {
       assert (lua_type (L, -1) == LUA_TTABLE);
-      rawgetfield (L, -1, "__type");
+      luabridge::rawgetfield (L, -1, "__type");
       assert (lua_type (L, -1) == LUA_TSTRING);
       char const* const expected = lua_tostring (L, -1);
 
